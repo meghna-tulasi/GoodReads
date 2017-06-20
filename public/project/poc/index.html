@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="pocApp">
+<head>
+    <link href="../css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="../vendor/angular/angular.min.js"></script>
+    <script src="app.js"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="container-fluid"
+         ng-controller="pocController as model">
+
+        <h1>Search Book</h1>
+
+        <div class="row">
+            <div class="col-xs-6">
+                <h2>Search</h2>
+                <input ng-model="model.title"
+                       class="form-control"
+                       placeholder="search for a book"/>
+                <button class="btn btn-primary btn-block"
+                        ng-click="model.searchBook(model.title)">
+                    Search</button>
+                <h2>Search Results</h2>
+
+                <ul class="list-group">
+                    <li ng-click="model.searchDetails(book.id)" ng-repeat="book in model.books"
+                        class="list-group-item">
+                        <img ng-src="{{book.volumeInfo.imageLinks.smallThumbnail}}" width="50px"/>
+
+                        {{book.volumeInfo.title}}
+                        {{book.volumeInfo.averageRating}}
+                    </li>
+                </ul>
+            </div>
+            <div class="col-xs-6">
+                <h2>Details</h2>
+
+                        <img ng-src="{{model.book.volumeInfo.imageLinks.smallThumbnail}}" width="150px"/>
+                        <h5>{{model.book.volumeInfo.title}}</h5>
+                        <h6>{{model.book.volumeInfo.authors}}</h6>
+                            {{model.book.volumeInfo.description}}
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

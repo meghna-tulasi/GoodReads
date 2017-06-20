@@ -1,0 +1,54 @@
+
+
+<div id="content" ng-repeat="item in model.items">
+<div class="row">
+<div class="col-xs-10">
+<ul>
+    <li>
+        <div id="title">
+        <h3 class="title">
+            <a ng-click="">{{item.title}}</a>
+        </h3>
+        </div>
+        <div class="abaproduct-image">
+            <a href="">
+            <img src={{item.imageLinks.smallThumbnail}}>
+            </a>
+        </div>
+        <div>
+            <a href="">
+            <h6>{{item.averageRating}}</h6>
+            </a>
+        </div>
+        <br>
+        <div>
+            <a href="">
+         <h6>{{item.categories}}</h6>
+            </a>
+
+                <a ng-repeat="author in item.authors" href="/search/author/%22Rowling%2C%20J.%20K.%22">{{author}}
+                    &nbsp;
+                </a>
+            <a href=""> {{item.description}}</a>
+
+            </div>
+
+
+    </li>
+</ul>
+</div>
+    <div id="outerlink" class="col-xs-2">
+        <a href= {{item.infoLink}}>
+        <span class="glyphicon glyphicon-book">
+        </span>
+        </a>
+        <a href= "">
+        <span class="glyphicon glyphicon-bookmark">
+        </span>
+        </a>
+
+    </div>
+
+</div>
+</div>
+</div>
