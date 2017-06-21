@@ -3,58 +3,59 @@
         .module('GoodReads')
         .controller('registerController', registerController);
 
-    function registerController($location, userService) {
+    function registerController(userService, $location) {
 
         var model = this;
-
         model.register = register;
 
-        function register(username, password, password2, firstName, lastName, email) {
+        function register(firstName, lastName, username, password, verifyPassword) {
 
-            if((username === null && password === null) ||
-                (username === '' && password === '') ||
-                (typeof username === 'undefined' && typeof password === 'undefined')) {
-                model.error = 'username and password is required';
+            if(firstName === null || firstName === '' || typeof firstName === 'undefined') {
+                model.error = "First Name is required";
+                return;
+            }
+
+            if(lastName === null || lastName === '' || typeof lastName === 'undefined') {
+                model.error = "Last Name is required";
                 return;
             }
 
             if(username === null || username === '' || typeof username === 'undefined') {
-                model.error = 'username is required';
+                model.error = "Username is required";
                 return;
             }
 
-            if(password === null || password === '' || typeof password === 'undefined') {
-                model.error = 'password is required';
+            if(password === null || password ==='' || typeof password === 'undefined') {
+                model.error = "Password is required";
                 return;
             }
 
-            if(password !== password2 || password === null || typeof password === 'undefined') {
-                model.error = "passwords must match";
+            if(password !== verifyPassword) {
+                model.error = "Sorry, passwords must match";
                 return;
             }
-
 
             userService
                 .findUserByUsername(username)
-                .then(
-                    function () {
-                        model.error = "Username already in use";
-                    },
-                    function () {
-                        var newUser = {
-                            username: username,
-                            password: password,
-                            firstName: firstName,
-                            lastName: lastName,
-                            email: email
-                        };
-                        return userService
-                            .createUser(newUser);
-                    }
-                )
-                .then(function (user) {
-                    $location.url('/user/' + user._id);
-                });
+                .then(ifFound, ifNotFound);
+
+            function ifFound() {
+                model.error = "Sorry, that Username is taken";
+            }
+
+            function ifNotFound() {
+                var newUser = {
+                    firstName : firstName,
+                    lastName : lastName,
+                    username : username,
+                    password : password
+                };
+                return userService
+                    .createUser(newUser)
+                    .then(function (user) {
+                        $location.url('/profile/' +user._id);
+                    });
+            }
 
         }
     }

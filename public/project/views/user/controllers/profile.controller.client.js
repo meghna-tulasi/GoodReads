@@ -3,62 +3,63 @@
         .module('GoodReads')
         .controller('profileController', profileController);
 
-    function  profileController($location, $routeParams, userService) {
+    function  profileController(userService, $stateParams, $location, $timeout) {
         var model = this;
-
-        model.deleteUser = deleteUser;
+        model.userId = $stateParams.profileId;
         model.updateUser = updateUser;
+        model.deleteUser = deleteUser;
+        model.logout = logout;
 
-        model.userId = $routeParams['userId'];
+        userService
+            .findUserById(model.userId)
+            .then(renderUser, userError);
 
-        function init() {
+        function renderUser(user) {
+            model.user = user;
+        }
 
+        function userError() {
+            model.error = "User not found";
+        }
+
+        function updateUser(user) {
             userService
-                .findUserById(model.userId)
-                .then(renderUser, userError);
+                .updateUser(user, model.userId)
+                .then(updateSuccess, updateError);
 
-            function renderUser(user){
-                model.user = user;
+            function updateSuccess() {
+                model.successMessage = "Profile updated successfully";
             }
 
-            function userError(error) {
-                model.error = "User Not Found";
+            function updateError() {
+                model.errorMessage = "Unable to update profile";
             }
         }
 
-        init();
-
-        function deleteUser(userId) {
+        function deleteUser() {
             userService
-                .deleteUser(userId)
-                .then(function () {
-                    $location.url('/login');
-                }, function () {
-                    model.error = "Unregistration failed!"
-                });
-        }
+                .deleteUser(model.userId)
+                .then(deleteSuccess, deleteError);
 
-        function updateUser(newUser) {
-            if(newUser.username === null || newUser.username === '' || typeof newUser.username === 'undefined') {
-                model.error = 'username is required';
-                model.message = "";
-                return;
+            function deleteSuccess() {
+                model.successMessage = "Profile deleted successfully. Please wait while we're redirecting ....";
+                $timeout( function() {
+                    $location.url('/');
+                }, 3000);
             }
 
+            function deleteError() {
+                model.errorMessage = "Unable to delete profile";
+            }
 
-            userService
-                .updateUser(model.userId, newUser)
-                .then(function (user) {
-                    if (user != null) {
+            function logout() {
+                userService
+                    .logout()
+                    .then(function () {
+                        $location.url('/login');
+                    });
+            }
 
-                        model.message = "User has been updated successfully"
-                        model.error="";
-                    }
-                    else {
-                        model.error = "Unable to update user";
-                    }
-                });
         }
-
     }
-}) ();
+})();
